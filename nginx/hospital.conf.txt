@@ -1,0 +1,112 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name hospital.3utilities.com;
+
+    root /usr/share/nginx/html/hospital;
+    index index.html index.php;
+
+
+    # ==============================
+    # Main Website
+    # ==============================
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+
+    # ==============================
+    # PHP Configuration
+    # ==============================
+
+    location ~ \.php$ {
+        include fastcgi.conf;
+
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+
+        fastcgi_index index.php;
+
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+
+    # ==============================
+    # Images
+    # ==============================
+
+    location /images/ {
+        try_files $uri $uri/ =404;
+    }
+
+
+    # ==============================
+    # CSS
+    # ==============================
+
+    location ~* \.css$ {
+        try_files $uri =404;
+    }
+
+
+    # ==============================
+    # JavaScript
+    # ==============================
+
+    location ~* \.js$ {
+        try_files $uri =404;
+    }
+
+
+    # ==============================
+    # Fonts
+    # ==============================
+
+    location ~* \.(woff|woff2|ttf|otf)$ {
+        try_files $uri =404;
+    }
+
+
+    # ==============================
+    # Security
+    # ==============================
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+    location ~ /\.git {
+        deny all;
+    }
+
+
+    # ==============================
+    # Disable access to sensitive files
+    # ==============================
+
+    location ~* \.(env|ini|log|sql|bak|conf)$ {
+        deny all;
+    }
+
+
+    # ==============================
+    # Favicon
+    # ==============================
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+
+    # ==============================
+    # Robots
+    # ==============================
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+}
